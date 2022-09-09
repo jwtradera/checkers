@@ -1,0 +1,9 @@
+syntax = "proto3";
+package jwtradera.checkers.checkers;
+
+option go_package = "github.com/jwtradera/checkers/x/checkers/types";
+
+message NextGame {
+    string creator = 1;
+    uint64 idValue = 2;
+}
