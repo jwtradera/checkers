@@ -15,23 +15,23 @@ import (
 	"github.com/jwtradera/checkers/x/checkers/types"
 )
 
-func networkWithNextGameObjects(t *testing.T) (*network.Network, types.NextGame) {
+func networkWithSystemInfoObjects(t *testing.T) (*network.Network, types.SystemInfo) {
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
 	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
 
-	nextGame := &types.NextGame{}
-	nullify.Fill(&nextGame)
-	state.NextGame = nextGame
+	systemInfo := types.SystemInfo{}
+	nullify.Fill(&systemInfo)
+	state.SystemInfo = systemInfo
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
 	cfg.GenesisState[types.ModuleName] = buf
-	return network.New(t, cfg), *state.NextGame
+	return network.New(t, cfg), state.SystemInfo
 }
 
-func TestShowNextGame(t *testing.T) {
-	net, obj := networkWithNextGameObjects(t)
+func TestShowSystemInfo(t *testing.T) {
+	net, obj := networkWithSystemInfoObjects(t)
 
 	ctx := net.Validators[0].ClientCtx
 	common := []string{
@@ -41,7 +41,7 @@ func TestShowNextGame(t *testing.T) {
 		desc string
 		args []string
 		err  error
-		obj  types.NextGame
+		obj  types.SystemInfo
 	}{
 		{
 			desc: "get",
@@ -52,19 +52,19 @@ func TestShowNextGame(t *testing.T) {
 		t.Run(tc.desc, func(t *testing.T) {
 			var args []string
 			args = append(args, tc.args...)
-			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowNextGame(), args)
+			out, err := clitestutil.ExecTestCLICmd(ctx, cli.CmdShowSystemInfo(), args)
 			if tc.err != nil {
 				stat, ok := status.FromError(tc.err)
 				require.True(t, ok)
 				require.ErrorIs(t, stat.Err(), tc.err)
 			} else {
 				require.NoError(t, err)
-				var resp types.QueryGetNextGameResponse
+				var resp types.QueryGetSystemInfoResponse
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
-				require.NotNil(t, resp.NextGame)
+				require.NotNil(t, resp.SystemInfo)
 				require.Equal(t,
 					nullify.Fill(&tc.obj),
-					nullify.Fill(&resp.NextGame),
+					nullify.Fill(&resp.SystemInfo),
 				)
 			}
 		})

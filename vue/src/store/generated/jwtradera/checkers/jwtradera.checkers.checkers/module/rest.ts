@@ -9,12 +9,22 @@
  * ---------------------------------------------------------------
  */
 
-export type CheckersMsgCreatePostResponse = object;
-
-export interface CheckersNextGame {
-  /** @format uint64 */
+export interface CheckersMsgCreateGameResponse {
   idValue?: string;
 }
+
+export interface CheckersMsgPlayMoveResponse {
+  idValue?: string;
+
+  /** @format int64 */
+  capturedX?: string;
+
+  /** @format int64 */
+  capturedY?: string;
+  winner?: string;
+}
+
+export type CheckersMsgRejectGameResponse = object;
 
 /**
  * Params defines the parameters for the module.
@@ -36,12 +46,12 @@ export interface CheckersQueryAllStoredGameResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface CheckersQueryGetNextGameResponse {
-  NextGame?: CheckersNextGame;
-}
-
 export interface CheckersQueryGetStoredGameResponse {
   storedGame?: CheckersStoredGame;
+}
+
+export interface CheckersQueryGetSystemInfoResponse {
+  SystemInfo?: CheckersSystemInfo;
 }
 
 /**
@@ -53,11 +63,26 @@ export interface CheckersQueryParamsResponse {
 }
 
 export interface CheckersStoredGame {
+  creator?: string;
   index?: string;
-  game?: string;
+  board?: string;
   turn?: string;
   red?: string;
   black?: string;
+
+  /** @format uint64 */
+  moveCount?: string;
+  beforeIndex?: string;
+  afterIndex?: string;
+  deadline?: string;
+  winner?: string;
+}
+
+export interface CheckersSystemInfo {
+  /** @format uint64 */
+  nextId?: string;
+  fifoHeadIndex?: string;
+  fifoTailIndex?: string;
 }
 
 export interface ProtobufAny {
@@ -334,13 +359,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QueryNextGame
-   * @summary Queries a NextGame by index.
-   * @request GET:/jwtradera/checkers/checkers/next_game
+   * @name QuerySystemInfo
+   * @summary Queries a SystemInfo by index.
+   * @request GET:/b9lab/checkers/checkers/system_info
    */
-  queryNextGame = (params: RequestParams = {}) =>
-    this.request<CheckersQueryGetNextGameResponse, RpcStatus>({
-      path: `/jwtradera/checkers/checkers/next_game`,
+  querySystemInfo = (params: RequestParams = {}) =>
+    this.request<CheckersQueryGetSystemInfoResponse, RpcStatus>({
+      path: `/b9lab/checkers/checkers/system_info`,
       method: "GET",
       format: "json",
       ...params,

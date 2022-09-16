@@ -15,7 +15,7 @@ func TestGenesis(t *testing.T) {
 		Params: types.DefaultParams(),
 
 		NextGame: &types.NextGame{
-			IdValue: 31,
+			IdValue: 2,
 		},
 		StoredGameList: []types.StoredGame{
 			{

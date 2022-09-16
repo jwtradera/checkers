@@ -3,6 +3,7 @@ package types
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -18,30 +19,55 @@ func (storedGame *StoredGame) GetRedAddress() (red sdk.AccAddress, err error) {
 	red, errRed := sdk.AccAddressFromBech32(storedGame.Red)
 	return red, sdkerrors.Wrapf(errRed, ErrInvalidRed.Error(), storedGame.Red)
 }
-
 func (storedGame *StoredGame) GetBlackAddress() (black sdk.AccAddress, err error) {
 	black, errBlack := sdk.AccAddressFromBech32(storedGame.Black)
 	return black, sdkerrors.Wrapf(errBlack, ErrInvalidBlack.Error(), storedGame.Black)
 }
+func (storedGame *StoredGame) GetDeadlineAsTime() (deadline time.Time, err error) {
+    deadline, errDeadline := time.Parse(DeadlineLayout, storedGame.Deadline)
+    return deadline, sdkerrors.Wrapf(errDeadline, ErrInvalidDeadline.Error(), storedGame.Deadline)
+}
+func (storedGame StoredGame) GetPlayerAddress(color string) (address sdk.AccAddress, found bool, err error) {
+    black, err := storedGame.GetBlackAddress()
+    if err != nil {
+        return nil, false, err
+    }
+    red, err := storedGame.GetRedAddress()
+    if err != nil {
+        return nil, false, err
+    }
+    address, found = map[string]sdk.AccAddress{
+        rules.PieceStrings[rules.BLACK_PLAYER]: black,
+        rules.PieceStrings[rules.RED_PLAYER]:   red,
+    }[color]
+    return address, found, nil
+}
 
-func (storedGame *StoredGame) ParseGame() (game *rules.Game, err error) {
-	game, errGame := rules.Parse(storedGame.Game)
-	if errGame != nil {
-		return nil, sdkerrors.Wrapf(errGame, ErrGameNotParseable.Error())
+func (storedGame StoredGame) GetWinnerAddress() (address sdk.AccAddress, found bool, err error) {
+    return storedGame.GetPlayerAddress(storedGame.Winner)
+}
+
+func GetNextDeadline(ctx sdk.Context) time.Time {
+    return ctx.BlockTime().Add(MaxTurnDuration)
+}
+
+func FormatDeadline(deadline time.Time) string {
+    return deadline.UTC().Format(DeadlineLayout)
+}
+func (storedGame StoredGame) ParseGame() (game *rules.Game, err error) {
+	board, errBoard := rules.Parse(storedGame.Board)
+	if errBoard != nil {
+		return nil, sdkerrors.Wrapf(errBoard, ErrGameNotParseable.Error())
 	}
-	game.Turn = rules.StringPieces[storedGame.Turn].Player
-	if game.Turn.Color == "" {
+	board.Turn = rules.StringPieces[storedGame.Turn].Player
+	if board.Turn.Color == "" {
 		return nil, sdkerrors.Wrapf(errors.New(fmt.Sprintf("Turn: %s", storedGame.Turn)), ErrGameNotParseable.Error())
 	}
-	return game, nil
+	return board, nil
 }
 
 func (storedGame StoredGame) Validate() (err error) {
-	_, err = storedGame.GetCreatorAddress()
-	if err != nil {
-		return err
-	}
-	_, err = storedGame.ParseGame()
+	_, err = storedGame.GetBlackAddress()
 	if err != nil {
 		return err
 	}
@@ -49,6 +75,10 @@ func (storedGame StoredGame) Validate() (err error) {
 	if err != nil {
 		return err
 	}
-	_, err = storedGame.GetBlackAddress()
+	_, err = storedGame.ParseGame()
+	if err != nil {
+		return err
+	}
+	_, err = storedGame.GetDeadlineAsTime()
 	return err
 }

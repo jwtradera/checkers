@@ -3,25 +3,25 @@ package cli
 import (
 	"context"
 
+	"github.com/jwtradera/checkers/x/checkers/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/jwtradera/checkers/x/checkers/types"
 	"github.com/spf13/cobra"
 )
 
-func CmdShowNextGame() *cobra.Command {
+func CmdShowSystemInfo() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "show-next-game",
-		Short: "shows nextGame",
+		Use:   "show-system-info",
+		Short: "shows systemInfo",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx := client.GetClientContextFromCmd(cmd)
 
 			queryClient := types.NewQueryClient(clientCtx)
 
-			params := &types.QueryGetNextGameRequest{}
+			params := &types.QueryGetSystemInfoRequest{}
 
-			res, err := queryClient.NextGame(context.Background(), params)
+			res, err := queryClient.SystemInfo(context.Background(), params)
 			if err != nil {
 				return err
 			}

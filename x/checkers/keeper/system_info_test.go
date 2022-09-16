@@ -12,16 +12,16 @@ import (
 	"github.com/jwtradera/checkers/x/checkers/types"
 )
 
-func createTestNextGame(keeper *keeper.Keeper, ctx sdk.Context) types.NextGame {
-	item := types.NextGame{}
-	keeper.SetNextGame(ctx, item)
+func createTestSystemInfo(keeper *keeper.Keeper, ctx sdk.Context) types.SystemInfo {
+	item := types.SystemInfo{}
+	keeper.SetSystemInfo(ctx, item)
 	return item
 }
 
-func TestNextGameGet(t *testing.T) {
+func TestSystemInfoGet(t *testing.T) {
 	keeper, ctx := keepertest.CheckersKeeper(t)
-	item := createTestNextGame(keeper, ctx)
-	rst, found := keeper.GetNextGame(ctx)
+	item := createTestSystemInfo(keeper, ctx)
+	rst, found := keeper.GetSystemInfo(ctx)
 	require.True(t, found)
 	require.Equal(t,
 		nullify.Fill(&item),
@@ -29,10 +29,10 @@ func TestNextGameGet(t *testing.T) {
 	)
 }
 
-func TestNextGameRemove(t *testing.T) {
+func TestSystemInfoRemove(t *testing.T) {
 	keeper, ctx := keepertest.CheckersKeeper(t)
-	createTestNextGame(keeper, ctx)
-	keeper.RemoveNextGame(ctx)
-	_, found := keeper.GetNextGame(ctx)
+	createTestSystemInfo(keeper, ctx)
+	keeper.RemoveSystemInfo(ctx)
+	_, found := keeper.GetSystemInfo(ctx)
 	require.False(t, found)
 }

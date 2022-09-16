@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../checkers/params";
-import { NextGame } from "../checkers/next_game";
+import { SystemInfo } from "../checkers/system_info";
 import { StoredGame } from "../checkers/stored_game";
 import {
   PageRequest,
@@ -19,10 +19,10 @@ export interface QueryParamsResponse {
   params: Params | undefined;
 }
 
-export interface QueryGetNextGameRequest {}
+export interface QueryGetSystemInfoRequest {}
 
-export interface QueryGetNextGameResponse {
-  NextGame: NextGame | undefined;
+export interface QueryGetSystemInfoResponse {
+  SystemInfo: SystemInfo | undefined;
 }
 
 export interface QueryGetStoredGameRequest {
@@ -139,19 +139,25 @@ export const QueryParamsResponse = {
   },
 };
 
-const baseQueryGetNextGameRequest: object = {};
+const baseQueryGetSystemInfoRequest: object = {};
 
-export const QueryGetNextGameRequest = {
-  encode(_: QueryGetNextGameRequest, writer: Writer = Writer.create()): Writer {
+export const QueryGetSystemInfoRequest = {
+  encode(
+    _: QueryGetSystemInfoRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
     return writer;
   },
 
-  decode(input: Reader | Uint8Array, length?: number): QueryGetNextGameRequest {
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetSystemInfoRequest {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryGetNextGameRequest,
-    } as QueryGetNextGameRequest;
+      ...baseQueryGetSystemInfoRequest,
+    } as QueryGetSystemInfoRequest;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -163,37 +169,37 @@ export const QueryGetNextGameRequest = {
     return message;
   },
 
-  fromJSON(_: any): QueryGetNextGameRequest {
+  fromJSON(_: any): QueryGetSystemInfoRequest {
     const message = {
-      ...baseQueryGetNextGameRequest,
-    } as QueryGetNextGameRequest;
+      ...baseQueryGetSystemInfoRequest,
+    } as QueryGetSystemInfoRequest;
     return message;
   },
 
-  toJSON(_: QueryGetNextGameRequest): unknown {
+  toJSON(_: QueryGetSystemInfoRequest): unknown {
     const obj: any = {};
     return obj;
   },
 
   fromPartial(
-    _: DeepPartial<QueryGetNextGameRequest>
-  ): QueryGetNextGameRequest {
+    _: DeepPartial<QueryGetSystemInfoRequest>
+  ): QueryGetSystemInfoRequest {
     const message = {
-      ...baseQueryGetNextGameRequest,
-    } as QueryGetNextGameRequest;
+      ...baseQueryGetSystemInfoRequest,
+    } as QueryGetSystemInfoRequest;
     return message;
   },
 };
 
-const baseQueryGetNextGameResponse: object = {};
+const baseQueryGetSystemInfoResponse: object = {};
 
-export const QueryGetNextGameResponse = {
+export const QueryGetSystemInfoResponse = {
   encode(
-    message: QueryGetNextGameResponse,
+    message: QueryGetSystemInfoResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.NextGame !== undefined) {
-      NextGame.encode(message.NextGame, writer.uint32(10).fork()).ldelim();
+    if (message.SystemInfo !== undefined) {
+      SystemInfo.encode(message.SystemInfo, writer.uint32(10).fork()).ldelim();
     }
     return writer;
   },
@@ -201,17 +207,17 @@ export const QueryGetNextGameResponse = {
   decode(
     input: Reader | Uint8Array,
     length?: number
-  ): QueryGetNextGameResponse {
+  ): QueryGetSystemInfoResponse {
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = {
-      ...baseQueryGetNextGameResponse,
-    } as QueryGetNextGameResponse;
+      ...baseQueryGetSystemInfoResponse,
+    } as QueryGetSystemInfoResponse;
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.NextGame = NextGame.decode(reader, reader.uint32());
+          message.SystemInfo = SystemInfo.decode(reader, reader.uint32());
           break;
         default:
           reader.skipType(tag & 7);
@@ -221,37 +227,37 @@ export const QueryGetNextGameResponse = {
     return message;
   },
 
-  fromJSON(object: any): QueryGetNextGameResponse {
+  fromJSON(object: any): QueryGetSystemInfoResponse {
     const message = {
-      ...baseQueryGetNextGameResponse,
-    } as QueryGetNextGameResponse;
-    if (object.NextGame !== undefined && object.NextGame !== null) {
-      message.NextGame = NextGame.fromJSON(object.NextGame);
+      ...baseQueryGetSystemInfoResponse,
+    } as QueryGetSystemInfoResponse;
+    if (object.SystemInfo !== undefined && object.SystemInfo !== null) {
+      message.SystemInfo = SystemInfo.fromJSON(object.SystemInfo);
     } else {
-      message.NextGame = undefined;
+      message.SystemInfo = undefined;
     }
     return message;
   },
 
-  toJSON(message: QueryGetNextGameResponse): unknown {
+  toJSON(message: QueryGetSystemInfoResponse): unknown {
     const obj: any = {};
-    message.NextGame !== undefined &&
-      (obj.NextGame = message.NextGame
-        ? NextGame.toJSON(message.NextGame)
+    message.SystemInfo !== undefined &&
+      (obj.SystemInfo = message.SystemInfo
+        ? SystemInfo.toJSON(message.SystemInfo)
         : undefined);
     return obj;
   },
 
   fromPartial(
-    object: DeepPartial<QueryGetNextGameResponse>
-  ): QueryGetNextGameResponse {
+    object: DeepPartial<QueryGetSystemInfoResponse>
+  ): QueryGetSystemInfoResponse {
     const message = {
-      ...baseQueryGetNextGameResponse,
-    } as QueryGetNextGameResponse;
-    if (object.NextGame !== undefined && object.NextGame !== null) {
-      message.NextGame = NextGame.fromPartial(object.NextGame);
+      ...baseQueryGetSystemInfoResponse,
+    } as QueryGetSystemInfoResponse;
+    if (object.SystemInfo !== undefined && object.SystemInfo !== null) {
+      message.SystemInfo = SystemInfo.fromPartial(object.SystemInfo);
     } else {
-      message.NextGame = undefined;
+      message.SystemInfo = undefined;
     }
     return message;
   },
@@ -575,8 +581,10 @@ export const QueryAllStoredGameResponse = {
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
-  /** Queries a NextGame by index. */
-  NextGame(request: QueryGetNextGameRequest): Promise<QueryGetNextGameResponse>;
+  /** Queries a SystemInfo by index. */
+  SystemInfo(
+    request: QueryGetSystemInfoRequest
+  ): Promise<QueryGetSystemInfoResponse>;
   /** Queries a StoredGame by index. */
   StoredGame(
     request: QueryGetStoredGameRequest
@@ -602,17 +610,17 @@ export class QueryClientImpl implements Query {
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
   }
 
-  NextGame(
-    request: QueryGetNextGameRequest
-  ): Promise<QueryGetNextGameResponse> {
-    const data = QueryGetNextGameRequest.encode(request).finish();
+  SystemInfo(
+    request: QueryGetSystemInfoRequest
+  ): Promise<QueryGetSystemInfoResponse> {
+    const data = QueryGetSystemInfoRequest.encode(request).finish();
     const promise = this.rpc.request(
       "jwtradera.checkers.checkers.Query",
-      "NextGame",
+      "SystemInfo",
       data
     );
     return promise.then((data) =>
-      QueryGetNextGameResponse.decode(new Reader(data))
+      QueryGetSystemInfoResponse.decode(new Reader(data))
     );
   }
 

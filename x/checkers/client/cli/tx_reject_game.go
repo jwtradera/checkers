@@ -12,24 +12,22 @@ import (
 
 var _ = strconv.Itoa(0)
 
-func CmdCreatePost() *cobra.Command {
+func CmdRejectGame() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create-post [title] [body]",
-		Short: "Broadcast message createPost",
-		Args:  cobra.ExactArgs(2),
+		Use:   "reject-game [game-index]",
+		Short: "Broadcast message rejectGame",
+		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argTitle := args[0]
-			argBody := args[1]
+			argGameIndex := args[0]
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCreatePost(
+			msg := types.NewMsgRejectGame(
 				clientCtx.GetFromAddress().String(),
-				argTitle,
-				argBody,
+				argGameIndex,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err

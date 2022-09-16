@@ -22,8 +22,8 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "valid genesis state",
 			genState: &types.GenesisState{
 
-				NextGame: &types.NextGame{
-					IdValue: 17,
+				SystemInfo: types.SystemInfo{
+					NextId: 39,
 				},
 				StoredGameList: []types.StoredGame{
 					{
@@ -62,4 +62,17 @@ func TestGenesisState_Validate(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestDefaultGenesisIsCorrect(t *testing.T) {
+	require.EqualValues(t,
+		&types.GenesisState{
+			StoredGameList: []types.StoredGame{},
+			SystemInfo: types.SystemInfo{
+				NextId:        uint64(1),
+				FifoHeadIndex: "-1",
+				FifoTailIndex: "-1",
+			},
+		},
+		types.DefaultGenesis())
 }

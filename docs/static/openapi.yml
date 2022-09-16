@@ -30176,22 +30176,26 @@ paths:
           format: uint64
       tags:
         - Query
-  /jwtradera/checkers/checkers/next_game:
+  /b9lab/checkers/checkers/system_info:
     get:
-      summary: Queries a NextGame by index.
-      operationId: JwtraderaCheckersCheckersNextGame
+      summary: Queries a SystemInfo by index.
+      operationId: JwtraderaCheckersCheckersSystemInfo
       responses:
         '200':
           description: A successful response.
           schema:
             type: object
             properties:
-              NextGame:
+              SystemInfo:
                 type: object
                 properties:
-                  idValue:
+                  nextId:
                     type: string
                     format: uint64
+                  fifoHeadIndex:
+                    type: string
+                  fifoTailIndex:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -30263,15 +30267,28 @@ paths:
                 items:
                   type: object
                   properties:
+                    creator:
+                      type: string
                     index:
                       type: string
-                    game:
+                    board:
                       type: string
                     turn:
                       type: string
                     red:
                       type: string
                     black:
+                      type: string
+                    moveCount:
+                      type: string
+                      format: uint64
+                    beforeIndex:
+                      type: string
+                    afterIndex:
+                      type: string
+                    deadline:
+                      type: string
+                    winner:
                       type: string
               pagination:
                 type: object
@@ -30365,16 +30382,6 @@ paths:
           in: query
           required: false
           type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
       tags:
         - Query
   '/jwtradera/checkers/checkers/stored_game/{index}':
@@ -30390,15 +30397,28 @@ paths:
               storedGame:
                 type: object
                 properties:
+                  creator:
+                    type: string
                   index:
                     type: string
-                  game:
+                  board:
                     type: string
                   turn:
                     type: string
                   red:
                     type: string
                   black:
+                    type: string
+                  moveCount:
+                    type: string
+                    format: uint64
+                  beforeIndex:
+                    type: string
+                  afterIndex:
+                    type: string
+                  deadline:
+                    type: string
+                  winner:
                     type: string
         default:
           description: An unexpected error response.
@@ -51807,14 +51827,26 @@ definitions:
     description: |-
       Version defines the versioning scheme used to negotiate the IBC verison in
       the connection handshake.
-  jwtradera.checkers.checkers.MsgCreatePostResponse:
-    type: object
-  jwtradera.checkers.checkers.NextGame:
+  jwtradera.checkers.checkers.MsgCreateGameResponse:
     type: object
     properties:
       idValue:
         type: string
-        format: uint64
+  jwtradera.checkers.checkers.MsgPlayMoveResponse:
+    type: object
+    properties:
+      idValue:
+        type: string
+      capturedX:
+        type: string
+        format: int64
+      capturedY:
+        type: string
+        format: int64
+      winner:
+        type: string
+  jwtradera.checkers.checkers.MsgRejectGameResponse:
+    type: object
   jwtradera.checkers.checkers.Params:
     type: object
     description: Params defines the parameters for the module.
@@ -51826,15 +51858,28 @@ definitions:
         items:
           type: object
           properties:
+            creator:
+              type: string
             index:
               type: string
-            game:
+            board:
               type: string
             turn:
               type: string
             red:
               type: string
             black:
+              type: string
+            moveCount:
+              type: string
+              format: uint64
+            beforeIndex:
+              type: string
+            afterIndex:
+              type: string
+            deadline:
+              type: string
+            winner:
               type: string
       pagination:
         type: object
@@ -51861,30 +51906,47 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  jwtradera.checkers.checkers.QueryGetNextGameResponse:
-    type: object
-    properties:
-      NextGame:
-        type: object
-        properties:
-          idValue:
-            type: string
-            format: uint64
   jwtradera.checkers.checkers.QueryGetStoredGameResponse:
     type: object
     properties:
       storedGame:
         type: object
         properties:
+          creator:
+            type: string
           index:
             type: string
-          game:
+          board:
             type: string
           turn:
             type: string
           red:
             type: string
           black:
+            type: string
+          moveCount:
+            type: string
+            format: uint64
+          beforeIndex:
+            type: string
+          afterIndex:
+            type: string
+          deadline:
+            type: string
+          winner:
+            type: string
+  jwtradera.checkers.checkers.QueryGetSystemInfoResponse:
+    type: object
+    properties:
+      SystemInfo:
+        type: object
+        properties:
+          nextId:
+            type: string
+            format: uint64
+          fifoHeadIndex:
+            type: string
+          fifoTailIndex:
             type: string
   jwtradera.checkers.checkers.QueryParamsResponse:
     type: object
@@ -51896,15 +51958,38 @@ definitions:
   jwtradera.checkers.checkers.StoredGame:
     type: object
     properties:
+      creator:
+        type: string
       index:
         type: string
-      game:
+      board:
         type: string
       turn:
         type: string
       red:
         type: string
       black:
+        type: string
+      moveCount:
+        type: string
+        format: uint64
+      beforeIndex:
+        type: string
+      afterIndex:
+        type: string
+      deadline:
+        type: string
+      winner:
+        type: string
+  jwtradera.checkers.checkers.SystemInfo:
+    type: object
+    properties:
+      nextId:
+        type: string
+        format: uint64
+      fifoHeadIndex:
+        type: string
+      fifoTailIndex:
         type: string
   tendermint.spn.monitoringp.ConnectionChannelID:
     type: object

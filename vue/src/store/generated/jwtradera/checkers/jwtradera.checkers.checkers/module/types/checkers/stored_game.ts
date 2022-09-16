@@ -1,40 +1,73 @@
 /* eslint-disable */
-import { Writer, Reader } from "protobufjs/minimal";
+import * as Long from "long";
+import { util, configure, Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "jwtradera.checkers.checkers";
 
 export interface StoredGame {
+  creator: string;
   index: string;
-  game: string;
+  board: string;
   turn: string;
   red: string;
   black: string;
+  moveCount: number;
+  /** Pertains to the FIFO. Toward head. */
+  beforeIndex: string;
+  /** Pertains to the FIFO. Toward tail. */
+  afterIndex: string;
+  deadline: string;
+  winner: string;
 }
 
 const baseStoredGame: object = {
+  creator: "",
   index: "",
-  game: "",
+  board: "",
   turn: "",
   red: "",
   black: "",
+  moveCount: 0,
+  beforeIndex: "",
+  afterIndex: "",
+  deadline: "",
+  winner: "",
 };
 
 export const StoredGame = {
   encode(message: StoredGame, writer: Writer = Writer.create()): Writer {
-    if (message.index !== "") {
-      writer.uint32(10).string(message.index);
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
     }
-    if (message.game !== "") {
-      writer.uint32(18).string(message.game);
+    if (message.index !== "") {
+      writer.uint32(18).string(message.index);
+    }
+    if (message.board !== "") {
+      writer.uint32(26).string(message.board);
     }
     if (message.turn !== "") {
-      writer.uint32(26).string(message.turn);
+      writer.uint32(34).string(message.turn);
     }
     if (message.red !== "") {
-      writer.uint32(34).string(message.red);
+      writer.uint32(42).string(message.red);
     }
     if (message.black !== "") {
-      writer.uint32(42).string(message.black);
+      writer.uint32(50).string(message.black);
+    }
+    if (message.moveCount !== 0) {
+      writer.uint32(56).uint64(message.moveCount);
+    }
+    if (message.beforeIndex !== "") {
+      writer.uint32(66).string(message.beforeIndex);
+    }
+    if (message.afterIndex !== "") {
+      writer.uint32(74).string(message.afterIndex);
+    }
+    if (message.deadline !== "") {
+      writer.uint32(82).string(message.deadline);
+    }
+    if (message.winner !== "") {
+      writer.uint32(90).string(message.winner);
     }
     return writer;
   },
@@ -47,19 +80,37 @@ export const StoredGame = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.index = reader.string();
+          message.creator = reader.string();
           break;
         case 2:
-          message.game = reader.string();
+          message.index = reader.string();
           break;
         case 3:
-          message.turn = reader.string();
+          message.board = reader.string();
           break;
         case 4:
-          message.red = reader.string();
+          message.turn = reader.string();
           break;
         case 5:
+          message.red = reader.string();
+          break;
+        case 6:
           message.black = reader.string();
+          break;
+        case 7:
+          message.moveCount = longToNumber(reader.uint64() as Long);
+          break;
+        case 8:
+          message.beforeIndex = reader.string();
+          break;
+        case 9:
+          message.afterIndex = reader.string();
+          break;
+        case 10:
+          message.deadline = reader.string();
+          break;
+        case 11:
+          message.winner = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -71,15 +122,20 @@ export const StoredGame = {
 
   fromJSON(object: any): StoredGame {
     const message = { ...baseStoredGame } as StoredGame;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
     if (object.index !== undefined && object.index !== null) {
       message.index = String(object.index);
     } else {
       message.index = "";
     }
-    if (object.game !== undefined && object.game !== null) {
-      message.game = String(object.game);
+    if (object.board !== undefined && object.board !== null) {
+      message.board = String(object.board);
     } else {
-      message.game = "";
+      message.board = "";
     }
     if (object.turn !== undefined && object.turn !== null) {
       message.turn = String(object.turn);
@@ -96,30 +152,67 @@ export const StoredGame = {
     } else {
       message.black = "";
     }
+    if (object.moveCount !== undefined && object.moveCount !== null) {
+      message.moveCount = Number(object.moveCount);
+    } else {
+      message.moveCount = 0;
+    }
+    if (object.beforeIndex !== undefined && object.beforeIndex !== null) {
+      message.beforeIndex = String(object.beforeIndex);
+    } else {
+      message.beforeIndex = "";
+    }
+    if (object.afterIndex !== undefined && object.afterIndex !== null) {
+      message.afterIndex = String(object.afterIndex);
+    } else {
+      message.afterIndex = "";
+    }
+    if (object.deadline !== undefined && object.deadline !== null) {
+      message.deadline = String(object.deadline);
+    } else {
+      message.deadline = "";
+    }
+    if (object.winner !== undefined && object.winner !== null) {
+      message.winner = String(object.winner);
+    } else {
+      message.winner = "";
+    }
     return message;
   },
 
   toJSON(message: StoredGame): unknown {
     const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
     message.index !== undefined && (obj.index = message.index);
-    message.game !== undefined && (obj.game = message.game);
+    message.board !== undefined && (obj.board = message.board);
     message.turn !== undefined && (obj.turn = message.turn);
     message.red !== undefined && (obj.red = message.red);
     message.black !== undefined && (obj.black = message.black);
+    message.moveCount !== undefined && (obj.moveCount = message.moveCount);
+    message.beforeIndex !== undefined &&
+      (obj.beforeIndex = message.beforeIndex);
+    message.afterIndex !== undefined && (obj.afterIndex = message.afterIndex);
+    message.deadline !== undefined && (obj.deadline = message.deadline);
+    message.winner !== undefined && (obj.winner = message.winner);
     return obj;
   },
 
   fromPartial(object: DeepPartial<StoredGame>): StoredGame {
     const message = { ...baseStoredGame } as StoredGame;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
     if (object.index !== undefined && object.index !== null) {
       message.index = object.index;
     } else {
       message.index = "";
     }
-    if (object.game !== undefined && object.game !== null) {
-      message.game = object.game;
+    if (object.board !== undefined && object.board !== null) {
+      message.board = object.board;
     } else {
-      message.game = "";
+      message.board = "";
     }
     if (object.turn !== undefined && object.turn !== null) {
       message.turn = object.turn;
@@ -136,9 +229,44 @@ export const StoredGame = {
     } else {
       message.black = "";
     }
+    if (object.moveCount !== undefined && object.moveCount !== null) {
+      message.moveCount = object.moveCount;
+    } else {
+      message.moveCount = 0;
+    }
+    if (object.beforeIndex !== undefined && object.beforeIndex !== null) {
+      message.beforeIndex = object.beforeIndex;
+    } else {
+      message.beforeIndex = "";
+    }
+    if (object.afterIndex !== undefined && object.afterIndex !== null) {
+      message.afterIndex = object.afterIndex;
+    } else {
+      message.afterIndex = "";
+    }
+    if (object.deadline !== undefined && object.deadline !== null) {
+      message.deadline = object.deadline;
+    } else {
+      message.deadline = "";
+    }
+    if (object.winner !== undefined && object.winner !== null) {
+      message.winner = object.winner;
+    } else {
+      message.winner = "";
+    }
     return message;
   },
 };
+
+declare var self: any | undefined;
+declare var window: any | undefined;
+var globalThis: any = (() => {
+  if (typeof globalThis !== "undefined") return globalThis;
+  if (typeof self !== "undefined") return self;
+  if (typeof window !== "undefined") return window;
+  if (typeof global !== "undefined") return global;
+  throw "Unable to locate global object";
+})();
 
 type Builtin = Date | Function | Uint8Array | string | number | undefined;
 export type DeepPartial<T> = T extends Builtin
@@ -150,3 +278,15 @@ export type DeepPartial<T> = T extends Builtin
   : T extends {}
   ? { [K in keyof T]?: DeepPartial<T[K]> }
   : Partial<T>;
+
+function longToNumber(long: Long): number {
+  if (long.gt(Number.MAX_SAFE_INTEGER)) {
+    throw new globalThis.Error("Value is larger than Number.MAX_SAFE_INTEGER");
+  }
+  return long.toNumber();
+}
+
+if (util.Long !== Long) {
+  util.Long = Long as any;
+  configure();
+}

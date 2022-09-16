@@ -13,20 +13,20 @@ import (
 	"github.com/jwtradera/checkers/x/checkers/types"
 )
 
-func TestNextGameQuery(t *testing.T) {
+func TestSystemInfoQuery(t *testing.T) {
 	keeper, ctx := keepertest.CheckersKeeper(t)
 	wctx := sdk.WrapSDKContext(ctx)
-	item := createTestNextGame(keeper, ctx)
+	item := createTestSystemInfo(keeper, ctx)
 	for _, tc := range []struct {
 		desc     string
-		request  *types.QueryGetNextGameRequest
-		response *types.QueryGetNextGameResponse
+		request  *types.QueryGetSystemInfoRequest
+		response *types.QueryGetSystemInfoResponse
 		err      error
 	}{
 		{
 			desc:     "First",
-			request:  &types.QueryGetNextGameRequest{},
-			response: &types.QueryGetNextGameResponse{NextGame: item},
+			request:  &types.QueryGetSystemInfoRequest{},
+			response: &types.QueryGetSystemInfoResponse{SystemInfo: item},
 		},
 		{
 			desc: "InvalidRequest",
@@ -34,7 +34,7 @@ func TestNextGameQuery(t *testing.T) {
 		},
 	} {
 		t.Run(tc.desc, func(t *testing.T) {
-			response, err := keeper.NextGame(wctx, tc.request)
+			response, err := keeper.SystemInfo(wctx, tc.request)
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
