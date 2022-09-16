@@ -1,8 +1,6 @@
 package types
 
-import (
-	"time"
-)
+import "time"
 
 const (
 	// ModuleName defines the module name
@@ -30,34 +28,41 @@ const (
 )
 
 const (
-	StoredGameEventKey     = "NewGameCreated" // Indicates what key to listen to
-	StoredGameEventCreator = "Creator"
-	StoredGameEventIndex   = "Index" // What game is relevant
-	StoredGameEventRed     = "Red"   // Is it relevant to me?
-	StoredGameEventBlack   = "Black" // Is it relevant to me?
+	GameCreatedEventType      = "new-game-created" // Indicates what event type to listen to
+	GameCreatedEventCreator   = "creator"          // Subsidiary information
+	GameCreatedEventGameIndex = "game-index"       // What game is relevant
+	GameCreatedEventBlack     = "black"            // Is it relevant to me?
+	GameCreatedEventRed       = "red"              // Is it relevant to me?
 )
 
 const (
-	PlayMoveEventKey       = "MovePlayed"
-	PlayMoveEventCreator   = "Creator"
-	PlayMoveEventIdValue   = "IdValue"
-	PlayMoveEventCapturedX = "CapturedX"
-	PlayMoveEventCapturedY = "CapturedY"
-	PlayMoveEventWinner    = "Winner"
-	PlayMoveEventBoard   	= "Board"
+	MovePlayedEventType      = "move-played"
+	MovePlayedEventCreator   = "creator"
+	MovePlayedEventGameIndex = "game-index"
+	MovePlayedEventCapturedX = "captured-x"
+	MovePlayedEventCapturedY = "captured-y"
+	MovePlayedEventWinner    = "winner"
+	MovePlayedEventBoard     = "board"
 )
 
 const (
-    RejectGameEventKey     = "GameRejected"
-    RejectGameEventCreator = "Creator"
-    RejectGameEventIdValue = "IdValue"
+	GameRejectedEventType      = "game-rejected"
+	GameRejectedEventCreator   = "creator"
+	GameRejectedEventGameIndex = "game-index"
 )
 
 const (
-    NoFifoIndex = "-1"
+	NoFifoIndex = "-1"
 )
 
 const (
-    MaxTurnDuration = time.Duration(24 * 3_600 * 1000_000_000) // 1 day
-    DeadlineLayout  = "2006-01-02 15:04:05.999999999 +0000 UTC"
+	MaxTurnDuration = time.Duration(20 * 1000_000_000) // 20 seconds
+	DeadlineLayout  = "2006-01-02 15:04:05.999999999 +0000 UTC"
+)
+
+const (
+	GameForfeitedEventType      = "game-forfeited"
+	GameForfeitedEventGameIndex = "game-index"
+	GameForfeitedEventWinner    = "winner"
+	GameForfeitedEventBoard     = "board"
 )

@@ -6,17 +6,17 @@ export const protobufPackage = "jwtradera.checkers.checkers";
 
 export interface MsgCreateGame {
   creator: string;
-  red: string;
   black: string;
+  red: string;
 }
 
 export interface MsgCreateGameResponse {
-  idValue: string;
+  gameIndex: string;
 }
 
 export interface MsgPlayMove {
   creator: string;
-  idValue: string;
+  gameIndex: string;
   fromX: number;
   fromY: number;
   toX: number;
@@ -24,7 +24,6 @@ export interface MsgPlayMove {
 }
 
 export interface MsgPlayMoveResponse {
-  idValue: string;
   capturedX: number;
   capturedY: number;
   winner: string;
@@ -32,23 +31,23 @@ export interface MsgPlayMoveResponse {
 
 export interface MsgRejectGame {
   creator: string;
-  idValue: string;
+  gameIndex: string;
 }
 
 export interface MsgRejectGameResponse {}
 
-const baseMsgCreateGame: object = { creator: "", red: "", black: "" };
+const baseMsgCreateGame: object = { creator: "", black: "", red: "" };
 
 export const MsgCreateGame = {
   encode(message: MsgCreateGame, writer: Writer = Writer.create()): Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.red !== "") {
-      writer.uint32(18).string(message.red);
-    }
     if (message.black !== "") {
-      writer.uint32(26).string(message.black);
+      writer.uint32(18).string(message.black);
+    }
+    if (message.red !== "") {
+      writer.uint32(26).string(message.red);
     }
     return writer;
   },
@@ -64,10 +63,10 @@ export const MsgCreateGame = {
           message.creator = reader.string();
           break;
         case 2:
-          message.red = reader.string();
+          message.black = reader.string();
           break;
         case 3:
-          message.black = reader.string();
+          message.red = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -84,15 +83,15 @@ export const MsgCreateGame = {
     } else {
       message.creator = "";
     }
-    if (object.red !== undefined && object.red !== null) {
-      message.red = String(object.red);
-    } else {
-      message.red = "";
-    }
     if (object.black !== undefined && object.black !== null) {
       message.black = String(object.black);
     } else {
       message.black = "";
+    }
+    if (object.red !== undefined && object.red !== null) {
+      message.red = String(object.red);
+    } else {
+      message.red = "";
     }
     return message;
   },
@@ -100,8 +99,8 @@ export const MsgCreateGame = {
   toJSON(message: MsgCreateGame): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.red !== undefined && (obj.red = message.red);
     message.black !== undefined && (obj.black = message.black);
+    message.red !== undefined && (obj.red = message.red);
     return obj;
   },
 
@@ -112,29 +111,29 @@ export const MsgCreateGame = {
     } else {
       message.creator = "";
     }
-    if (object.red !== undefined && object.red !== null) {
-      message.red = object.red;
-    } else {
-      message.red = "";
-    }
     if (object.black !== undefined && object.black !== null) {
       message.black = object.black;
     } else {
       message.black = "";
     }
+    if (object.red !== undefined && object.red !== null) {
+      message.red = object.red;
+    } else {
+      message.red = "";
+    }
     return message;
   },
 };
 
-const baseMsgCreateGameResponse: object = { idValue: "" };
+const baseMsgCreateGameResponse: object = { gameIndex: "" };
 
 export const MsgCreateGameResponse = {
   encode(
     message: MsgCreateGameResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.idValue !== "") {
-      writer.uint32(10).string(message.idValue);
+    if (message.gameIndex !== "") {
+      writer.uint32(10).string(message.gameIndex);
     }
     return writer;
   },
@@ -147,7 +146,7 @@ export const MsgCreateGameResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.idValue = reader.string();
+          message.gameIndex = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -159,17 +158,17 @@ export const MsgCreateGameResponse = {
 
   fromJSON(object: any): MsgCreateGameResponse {
     const message = { ...baseMsgCreateGameResponse } as MsgCreateGameResponse;
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = String(object.idValue);
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = String(object.gameIndex);
     } else {
-      message.idValue = "";
+      message.gameIndex = "";
     }
     return message;
   },
 
   toJSON(message: MsgCreateGameResponse): unknown {
     const obj: any = {};
-    message.idValue !== undefined && (obj.idValue = message.idValue);
+    message.gameIndex !== undefined && (obj.gameIndex = message.gameIndex);
     return obj;
   },
 
@@ -177,10 +176,10 @@ export const MsgCreateGameResponse = {
     object: DeepPartial<MsgCreateGameResponse>
   ): MsgCreateGameResponse {
     const message = { ...baseMsgCreateGameResponse } as MsgCreateGameResponse;
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = object.idValue;
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = object.gameIndex;
     } else {
-      message.idValue = "";
+      message.gameIndex = "";
     }
     return message;
   },
@@ -188,7 +187,7 @@ export const MsgCreateGameResponse = {
 
 const baseMsgPlayMove: object = {
   creator: "",
-  idValue: "",
+  gameIndex: "",
   fromX: 0,
   fromY: 0,
   toX: 0,
@@ -200,8 +199,8 @@ export const MsgPlayMove = {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.idValue !== "") {
-      writer.uint32(18).string(message.idValue);
+    if (message.gameIndex !== "") {
+      writer.uint32(18).string(message.gameIndex);
     }
     if (message.fromX !== 0) {
       writer.uint32(24).uint64(message.fromX);
@@ -229,7 +228,7 @@ export const MsgPlayMove = {
           message.creator = reader.string();
           break;
         case 2:
-          message.idValue = reader.string();
+          message.gameIndex = reader.string();
           break;
         case 3:
           message.fromX = longToNumber(reader.uint64() as Long);
@@ -258,10 +257,10 @@ export const MsgPlayMove = {
     } else {
       message.creator = "";
     }
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = String(object.idValue);
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = String(object.gameIndex);
     } else {
-      message.idValue = "";
+      message.gameIndex = "";
     }
     if (object.fromX !== undefined && object.fromX !== null) {
       message.fromX = Number(object.fromX);
@@ -289,7 +288,7 @@ export const MsgPlayMove = {
   toJSON(message: MsgPlayMove): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.idValue !== undefined && (obj.idValue = message.idValue);
+    message.gameIndex !== undefined && (obj.gameIndex = message.gameIndex);
     message.fromX !== undefined && (obj.fromX = message.fromX);
     message.fromY !== undefined && (obj.fromY = message.fromY);
     message.toX !== undefined && (obj.toX = message.toX);
@@ -304,10 +303,10 @@ export const MsgPlayMove = {
     } else {
       message.creator = "";
     }
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = object.idValue;
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = object.gameIndex;
     } else {
-      message.idValue = "";
+      message.gameIndex = "";
     }
     if (object.fromX !== undefined && object.fromX !== null) {
       message.fromX = object.fromX;
@@ -334,7 +333,6 @@ export const MsgPlayMove = {
 };
 
 const baseMsgPlayMoveResponse: object = {
-  idValue: "",
   capturedX: 0,
   capturedY: 0,
   winner: "",
@@ -345,17 +343,14 @@ export const MsgPlayMoveResponse = {
     message: MsgPlayMoveResponse,
     writer: Writer = Writer.create()
   ): Writer {
-    if (message.idValue !== "") {
-      writer.uint32(10).string(message.idValue);
-    }
     if (message.capturedX !== 0) {
-      writer.uint32(16).int64(message.capturedX);
+      writer.uint32(8).int32(message.capturedX);
     }
     if (message.capturedY !== 0) {
-      writer.uint32(24).int64(message.capturedY);
+      writer.uint32(16).int32(message.capturedY);
     }
     if (message.winner !== "") {
-      writer.uint32(34).string(message.winner);
+      writer.uint32(26).string(message.winner);
     }
     return writer;
   },
@@ -368,15 +363,12 @@ export const MsgPlayMoveResponse = {
       const tag = reader.uint32();
       switch (tag >>> 3) {
         case 1:
-          message.idValue = reader.string();
+          message.capturedX = reader.int32();
           break;
         case 2:
-          message.capturedX = longToNumber(reader.int64() as Long);
+          message.capturedY = reader.int32();
           break;
         case 3:
-          message.capturedY = longToNumber(reader.int64() as Long);
-          break;
-        case 4:
           message.winner = reader.string();
           break;
         default:
@@ -389,11 +381,6 @@ export const MsgPlayMoveResponse = {
 
   fromJSON(object: any): MsgPlayMoveResponse {
     const message = { ...baseMsgPlayMoveResponse } as MsgPlayMoveResponse;
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = String(object.idValue);
-    } else {
-      message.idValue = "";
-    }
     if (object.capturedX !== undefined && object.capturedX !== null) {
       message.capturedX = Number(object.capturedX);
     } else {
@@ -414,7 +401,6 @@ export const MsgPlayMoveResponse = {
 
   toJSON(message: MsgPlayMoveResponse): unknown {
     const obj: any = {};
-    message.idValue !== undefined && (obj.idValue = message.idValue);
     message.capturedX !== undefined && (obj.capturedX = message.capturedX);
     message.capturedY !== undefined && (obj.capturedY = message.capturedY);
     message.winner !== undefined && (obj.winner = message.winner);
@@ -423,11 +409,6 @@ export const MsgPlayMoveResponse = {
 
   fromPartial(object: DeepPartial<MsgPlayMoveResponse>): MsgPlayMoveResponse {
     const message = { ...baseMsgPlayMoveResponse } as MsgPlayMoveResponse;
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = object.idValue;
-    } else {
-      message.idValue = "";
-    }
     if (object.capturedX !== undefined && object.capturedX !== null) {
       message.capturedX = object.capturedX;
     } else {
@@ -447,15 +428,15 @@ export const MsgPlayMoveResponse = {
   },
 };
 
-const baseMsgRejectGame: object = { creator: "", idValue: "" };
+const baseMsgRejectGame: object = { creator: "", gameIndex: "" };
 
 export const MsgRejectGame = {
   encode(message: MsgRejectGame, writer: Writer = Writer.create()): Writer {
     if (message.creator !== "") {
       writer.uint32(10).string(message.creator);
     }
-    if (message.idValue !== "") {
-      writer.uint32(18).string(message.idValue);
+    if (message.gameIndex !== "") {
+      writer.uint32(18).string(message.gameIndex);
     }
     return writer;
   },
@@ -471,7 +452,7 @@ export const MsgRejectGame = {
           message.creator = reader.string();
           break;
         case 2:
-          message.idValue = reader.string();
+          message.gameIndex = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -488,10 +469,10 @@ export const MsgRejectGame = {
     } else {
       message.creator = "";
     }
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = String(object.idValue);
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = String(object.gameIndex);
     } else {
-      message.idValue = "";
+      message.gameIndex = "";
     }
     return message;
   },
@@ -499,7 +480,7 @@ export const MsgRejectGame = {
   toJSON(message: MsgRejectGame): unknown {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
-    message.idValue !== undefined && (obj.idValue = message.idValue);
+    message.gameIndex !== undefined && (obj.gameIndex = message.gameIndex);
     return obj;
   },
 
@@ -510,10 +491,10 @@ export const MsgRejectGame = {
     } else {
       message.creator = "";
     }
-    if (object.idValue !== undefined && object.idValue !== null) {
-      message.idValue = object.idValue;
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = object.gameIndex;
     } else {
-      message.idValue = "";
+      message.gameIndex = "";
     }
     return message;
   },

@@ -10,17 +10,15 @@
  */
 
 export interface CheckersMsgCreateGameResponse {
-  idValue?: string;
+  gameIndex?: string;
 }
 
 export interface CheckersMsgPlayMoveResponse {
-  idValue?: string;
+  /** @format int32 */
+  capturedX?: number;
 
-  /** @format int64 */
-  capturedX?: string;
-
-  /** @format int64 */
-  capturedY?: string;
+  /** @format int32 */
+  capturedY?: number;
   winner?: string;
 }
 
@@ -63,12 +61,11 @@ export interface CheckersQueryParamsResponse {
 }
 
 export interface CheckersStoredGame {
-  creator?: string;
   index?: string;
   board?: string;
   turn?: string;
-  red?: string;
   black?: string;
+  red?: string;
 
   /** @format uint64 */
   moveCount?: string;
@@ -359,22 +356,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    * No description
    *
    * @tags Query
-   * @name QuerySystemInfo
-   * @summary Queries a SystemInfo by index.
-   * @request GET:/b9lab/checkers/checkers/system_info
-   */
-  querySystemInfo = (params: RequestParams = {}) =>
-    this.request<CheckersQueryGetSystemInfoResponse, RpcStatus>({
-      path: `/b9lab/checkers/checkers/system_info`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
    * @name QueryParams
    * @summary Parameters queries the parameters of the module.
    * @request GET:/jwtradera/checkers/checkers/params
@@ -424,6 +405,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   queryStoredGame = (index: string, params: RequestParams = {}) =>
     this.request<CheckersQueryGetStoredGameResponse, RpcStatus>({
       path: `/jwtradera/checkers/checkers/stored_game/${index}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QuerySystemInfo
+   * @summary Queries a SystemInfo by index.
+   * @request GET:/jwtradera/checkers/checkers/system_info
+   */
+  querySystemInfo = (params: RequestParams = {}) =>
+    this.request<CheckersQueryGetSystemInfoResponse, RpcStatus>({
+      path: `/jwtradera/checkers/checkers/system_info`,
       method: "GET",
       format: "json",
       ...params,

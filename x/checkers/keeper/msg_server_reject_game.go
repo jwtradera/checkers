@@ -9,13 +9,12 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-
 func (k msgServer) RejectGame(goCtx context.Context, msg *types.MsgRejectGame) (*types.MsgRejectGameResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	storedGame, found := k.Keeper.GetStoredGame(ctx, msg.IdValue)
+	storedGame, found := k.Keeper.GetStoredGame(ctx, msg.GameIndex)
 	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrGameNotFound, "game not found %s", msg.IdValue)
+		return nil, sdkerrors.Wrapf(types.ErrGameNotFound, "%s", msg.GameIndex)
 	}
 
 	if storedGame.Winner != rules.PieceStrings[rules.NO_PLAYER] {
@@ -34,19 +33,18 @@ func (k msgServer) RejectGame(goCtx context.Context, msg *types.MsgRejectGame) (
 		return nil, sdkerrors.Wrapf(types.ErrCreatorNotPlayer, "%s", msg.Creator)
 	}
 
-	// Remove the game completely as it is not interesting to keep it.
 	systemInfo, found := k.Keeper.GetSystemInfo(ctx)
 	if !found {
 		panic("SystemInfo not found")
 	}
 	k.Keeper.RemoveFromFifo(ctx, &storedGame, &systemInfo)
-	k.Keeper.RemoveStoredGame(ctx, msg.IdValue)
+	k.Keeper.RemoveStoredGame(ctx, msg.GameIndex)
 	k.Keeper.SetSystemInfo(ctx, systemInfo)
 
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(types.RejectGameEventKey,
-			sdk.NewAttribute(types.RejectGameEventCreator, msg.Creator),
-			sdk.NewAttribute(types.RejectGameEventIdValue, msg.IdValue),
+		sdk.NewEvent(types.GameRejectedEventType,
+			sdk.NewAttribute(types.GameRejectedEventCreator, msg.Creator),
+			sdk.NewAttribute(types.GameRejectedEventGameIndex, msg.GameIndex),
 		),
 	)
 

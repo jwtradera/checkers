@@ -19,7 +19,7 @@ service Query {
   }
   // Queries a SystemInfo by index.
 	rpc SystemInfo(QueryGetSystemInfoRequest) returns (QueryGetSystemInfoResponse) {
-		option (google.api.http).get = "/b9lab/checkers/checkers/system_info";
+		option (google.api.http).get = "/jwtradera/checkers/checkers/system_info";
 	}
 // Queries a StoredGame by index.
 	rpc StoredGame(QueryGetStoredGameRequest) returns (QueryGetStoredGameResponse) {

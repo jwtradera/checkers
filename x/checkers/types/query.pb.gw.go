@@ -384,7 +384,7 @@ func RegisterQueryHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 var (
 	pattern_Query_Params_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"jwtradera", "checkers", "params"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_SystemInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"b9lab", "checkers", "system_info"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_SystemInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2}, []string{"jwtradera", "checkers", "system_info"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_Query_StoredGame_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3}, []string{"jwtradera", "checkers", "stored_game", "index"}, "", runtime.AssumeColonVerbOpt(true)))
 

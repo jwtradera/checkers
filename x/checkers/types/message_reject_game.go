@@ -9,10 +9,10 @@ const TypeMsgRejectGame = "reject_game"
 
 var _ sdk.Msg = &MsgRejectGame{}
 
-func NewMsgRejectGame(creator string, idValue string) *MsgRejectGame {
+func NewMsgRejectGame(creator string, gameIndex string) *MsgRejectGame {
 	return &MsgRejectGame{
-		Creator: creator,
-		IdValue: idValue,
+		Creator:   creator,
+		GameIndex: gameIndex,
 	}
 }
 

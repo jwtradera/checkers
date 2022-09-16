@@ -3,50 +3,47 @@ package keeper
 import (
 	"context"
 	"strconv"
-	"strings"
 
+	"github.com/jwtradera/checkers/x/checkers/rules"
+	"github.com/jwtradera/checkers/x/checkers/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	rules "github.com/jwtradera/checkers/x/checkers/rules"
-	"github.com/jwtradera/checkers/x/checkers/types"
 )
 
 func (k msgServer) PlayMove(goCtx context.Context, msg *types.MsgPlayMove) (*types.MsgPlayMoveResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	storedGame, found := k.Keeper.GetStoredGame(ctx, msg.IdValue)
+	storedGame, found := k.Keeper.GetStoredGame(ctx, msg.GameIndex)
 	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrGameNotFound, "game not found %s", msg.IdValue)
+		return nil, sdkerrors.Wrapf(types.ErrGameNotFound, "%s", msg.GameIndex)
 	}
 
 	if storedGame.Winner != rules.PieceStrings[rules.NO_PLAYER] {
 		return nil, types.ErrGameFinished
 	}
 
-	// Is it an expected player?
-	isRed := strings.Compare(storedGame.Red, msg.Creator) == 0
-	isBlack := strings.Compare(storedGame.Black, msg.Creator) == 0
+	isBlack := storedGame.Black == msg.Creator
+	isRed := storedGame.Red == msg.Creator
 	var player rules.Player
-	if !isRed && !isBlack {
-		return nil, types.ErrCreatorNotPlayer
-	} else if isRed && isBlack {
+	if !isBlack && !isRed {
+		return nil, sdkerrors.Wrapf(types.ErrCreatorNotPlayer, "%s", msg.Creator)
+	} else if isBlack && isRed {
 		player = rules.StringPieces[storedGame.Turn].Player
-	} else if isRed {
-		player = rules.RED_PLAYER
-	} else {
+	} else if isBlack {
 		player = rules.BLACK_PLAYER
+	} else {
+		player = rules.RED_PLAYER
 	}
 
-	// Is it the player's turn?
 	game, err := storedGame.ParseGame()
 	if err != nil {
 		panic(err.Error())
 	}
+
 	if !game.TurnIs(player) {
-		return nil, types.ErrNotPlayerTurn
+		return nil, sdkerrors.Wrapf(types.ErrNotPlayerTurn, "%s", player)
 	}
 
-	// Do it
 	captured, moveErr := game.Move(
 		rules.Pos{
 			X: int(msg.FromX),
@@ -61,7 +58,8 @@ func (k msgServer) PlayMove(goCtx context.Context, msg *types.MsgPlayMove) (*typ
 		return nil, sdkerrors.Wrapf(types.ErrWrongMove, moveErr.Error())
 	}
 
-	// Save for the next play move
+	storedGame.Winner = rules.PieceStrings[game.Winner()]
+
 	systemInfo, found := k.Keeper.GetSystemInfo(ctx)
 	if !found {
 		panic("SystemInfo not found")
@@ -77,31 +75,24 @@ func (k msgServer) PlayMove(goCtx context.Context, msg *types.MsgPlayMove) (*typ
 
 	storedGame.MoveCount++
 	storedGame.Deadline = types.FormatDeadline(types.GetNextDeadline(ctx))
-	storedGame.Board = game.String()
 	storedGame.Turn = rules.PieceStrings[game.Turn]
-	storedGame.Winner = rules.PieceStrings[game.Winner()]
-
 	k.Keeper.SetStoredGame(ctx, storedGame)
 	k.Keeper.SetSystemInfo(ctx, systemInfo)
 
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, "checkers"),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.PlayMoveEventKey),
-			sdk.NewAttribute(types.PlayMoveEventCreator, msg.Creator),
-			sdk.NewAttribute(types.PlayMoveEventIdValue, msg.IdValue),
-			sdk.NewAttribute(types.PlayMoveEventCapturedX, strconv.FormatInt(int64(captured.X), 10)),
-			sdk.NewAttribute(types.PlayMoveEventCapturedY, strconv.FormatInt(int64(captured.Y), 10)),
-			sdk.NewAttribute(types.PlayMoveEventWinner, rules.PieceStrings[game.Winner()]),
-			sdk.NewAttribute(types.PlayMoveEventBoard, lastBoard),
+		sdk.NewEvent(types.MovePlayedEventType,
+			sdk.NewAttribute(types.MovePlayedEventCreator, msg.Creator),
+			sdk.NewAttribute(types.MovePlayedEventGameIndex, msg.GameIndex),
+			sdk.NewAttribute(types.MovePlayedEventCapturedX, strconv.FormatInt(int64(captured.X), 10)),
+			sdk.NewAttribute(types.MovePlayedEventCapturedY, strconv.FormatInt(int64(captured.Y), 10)),
+			sdk.NewAttribute(types.MovePlayedEventWinner, rules.PieceStrings[game.Winner()]),
+			sdk.NewAttribute(types.MovePlayedEventBoard, lastBoard),
 		),
 	)
 
-	// What to inform
 	return &types.MsgPlayMoveResponse{
-		IdValue:   msg.IdValue,
-		CapturedX: int64(captured.X),
-		CapturedY: int64(captured.Y),
+		CapturedX: int32(captured.X),
+		CapturedY: int32(captured.Y),
 		Winner:    rules.PieceStrings[game.Winner()],
 	}, nil
 }

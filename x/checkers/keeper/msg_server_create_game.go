@@ -4,14 +4,13 @@ import (
 	"context"
 	"strconv"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	rules "github.com/jwtradera/checkers/x/checkers/rules"
+	"github.com/jwtradera/checkers/x/checkers/rules"
 	"github.com/jwtradera/checkers/x/checkers/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func (k msgServer) CreateGame(goCtx context.Context, msg *types.MsgCreateGame) (*types.MsgCreateGameResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
-
 
 	systemInfo, found := k.Keeper.GetSystemInfo(ctx)
 	if !found {
@@ -21,18 +20,18 @@ func (k msgServer) CreateGame(goCtx context.Context, msg *types.MsgCreateGame) (
 
 	newGame := rules.New()
 	storedGame := types.StoredGame{
-		Creator: msg.Creator,
-		Index:   newIndex,
-		Board:    newGame.String(),
-		Turn:    rules.PieceStrings[newGame.Turn],
-		Red:     msg.Red,
-		Black:   msg.Black,
-		MoveCount: 0,
+		Index:       newIndex,
+		Board:       newGame.String(),
+		Turn:        rules.PieceStrings[newGame.Turn],
+		Black:       msg.Black,
+		Red:         msg.Red,
+		MoveCount:   0,
 		BeforeIndex: types.NoFifoIndex,
 		AfterIndex:  types.NoFifoIndex,
-		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
-		Winner:    rules.PieceStrings[rules.NO_PLAYER],
+		Deadline:    types.FormatDeadline(types.GetNextDeadline(ctx)),
+		Winner:      rules.PieceStrings[rules.NO_PLAYER],
 	}
+
 	err := storedGame.Validate()
 	if err != nil {
 		return nil, err
@@ -44,17 +43,15 @@ func (k msgServer) CreateGame(goCtx context.Context, msg *types.MsgCreateGame) (
 	k.Keeper.SetSystemInfo(ctx, systemInfo)
 
 	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(sdk.EventTypeMessage,
-			sdk.NewAttribute(sdk.AttributeKeyModule, "checkers"),
-			sdk.NewAttribute(sdk.AttributeKeyAction, types.StoredGameEventKey),
-			sdk.NewAttribute(types.StoredGameEventCreator, msg.Creator),
-			sdk.NewAttribute(types.StoredGameEventIndex, newIndex),
-			sdk.NewAttribute(types.StoredGameEventRed, msg.Red),
-			sdk.NewAttribute(types.StoredGameEventBlack, msg.Black),
+		sdk.NewEvent(types.GameCreatedEventType,
+			sdk.NewAttribute(types.GameCreatedEventCreator, msg.Creator),
+			sdk.NewAttribute(types.GameCreatedEventGameIndex, newIndex),
+			sdk.NewAttribute(types.GameCreatedEventBlack, msg.Black),
+			sdk.NewAttribute(types.GameCreatedEventRed, msg.Red),
 		),
 	)
 
 	return &types.MsgCreateGameResponse{
-		IdValue: newIndex,
+		GameIndex: newIndex,
 	}, nil
 }

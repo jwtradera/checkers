@@ -4,15 +4,14 @@ package jwtradera.checkers.checkers;
 option go_package = "github.com/jwtradera/checkers/x/checkers/types";
 
 message StoredGame {
-    string creator = 1;
-    string index = 2;
-    string board = 3;
-    string turn = 4;
-    string red = 5;
-    string black = 6;
-    uint64 moveCount = 7;
-    string beforeIndex = 8; // Pertains to the FIFO. Toward head.
-    string afterIndex = 9; // Pertains to the FIFO. Toward tail.
-    string deadline = 10;
-    string winner = 11;
+  string index = 1; 
+  string board = 2; 
+  string turn = 3; 
+  string black = 4; 
+  string red = 5; 
+  uint64 moveCount = 6;
+  string beforeIndex = 7;
+  string afterIndex = 8;
+  string deadline = 9;
+  string winner = 10;
 }
